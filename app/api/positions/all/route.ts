@@ -13,6 +13,10 @@ export async function GET(request: NextRequest) {
 
   const addresses = raw.split(',').filter(Boolean)
 
+  if (addresses.length > 50) {
+    return NextResponse.json({ error: 'Maximum 50 addresses allowed' }, { status: 400 })
+  }
+
   const results = await Promise.allSettled(
     addresses.map(address => fetchTraderPositions(address))
   )

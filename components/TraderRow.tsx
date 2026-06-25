@@ -22,7 +22,7 @@ export default function TraderRow({ trader }: TraderRowProps) {
       >
         <td className="px-4 py-3 text-gray-400 text-sm">{trader.rank}</td>
         <td className="px-4 py-3 text-white text-sm font-medium">{displayName}</td>
-        <td className="px-4 py-3 text-green-400 text-sm">
+        <td className={`px-4 py-3 text-sm ${trader.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
           ${trader.totalProfit.toLocaleString('en-US', { maximumFractionDigits: 0 })}
         </td>
         <td className="px-4 py-3 text-gray-300 text-sm">
@@ -49,8 +49,8 @@ export default function TraderRow({ trader }: TraderRowProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {trader.positions.map(pos => (
-                    <tr key={`${pos.marketId}:${pos.side}`} className="border-t border-gray-800">
+                  {trader.positions.map((pos, idx) => (
+                    <tr key={`${pos.marketId}:${pos.side}:${idx}`} className="border-t border-gray-800">
                       <td className="py-1.5 text-gray-200 pr-4">{pos.marketName}</td>
                       <td className={`py-1.5 font-medium ${pos.side === 'YES' ? 'text-green-400' : 'text-red-400'}`}>
                         {pos.side}

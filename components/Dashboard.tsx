@@ -52,7 +52,8 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => {
-    fetchData()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchData()
   }, [fetchData])
 
   const formattedTime = lastUpdated

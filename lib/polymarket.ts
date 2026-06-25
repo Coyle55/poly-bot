@@ -17,9 +17,10 @@ export async function fetchLeaderboard(limit = 50): Promise<Trader[]> {
 }
 
 export async function fetchTraderPositions(address: string): Promise<Position[]> {
-  const res = await fetch(`${DATA_API}/positions?user=${address}&sizeThreshold=0`, {
-    cache: 'no-store',
-  })
+  const url = new URL(`${DATA_API}/positions`)
+  url.searchParams.set('user', address)
+  url.searchParams.set('sizeThreshold', '0')
+  const res = await fetch(url, { cache: 'no-store' })
   if (!res.ok) throw new Error(`Positions fetch failed for ${address}: ${res.status}`)
   const raw: RawPolyPosition[] = await res.json()
   return raw.map(p => ({
@@ -50,6 +51,7 @@ export function buildMarketConsensus(traders: TraderWithPositions[]): MarketCons
       }
       const entry = map.get(key)!
       entry.traderCount++
+      entry.price = pos.price  // use most-recently-seen price
       entry.traders.push({ address: trader.address, name: trader.name, size: pos.size })
     }
   }
