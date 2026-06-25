@@ -5,13 +5,52 @@ interface ErrorBannerProps {
 
 export default function ErrorBanner({ message, onRetry }: ErrorBannerProps) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-red-800 bg-red-950 px-4 py-3 text-red-300">
-      <span className="text-sm">{message}</span>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      borderRadius: 12,
+      border: '1px solid rgba(239,68,68,0.2)',
+      background: 'rgba(239,68,68,0.06)',
+      padding: '14px 16px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          background: 'var(--loss)',
+          flexShrink: 0,
+          display: 'inline-block',
+        }} />
+        <span style={{
+          fontSize: 12,
+          color: 'var(--loss)',
+          fontFamily: 'Syne, sans-serif',
+          fontWeight: 500,
+        }}>
+          {message}
+        </span>
+      </div>
       <button
         onClick={onRetry}
-        className="ml-4 rounded bg-red-800 px-3 py-1 text-xs text-red-100 hover:bg-red-700 transition-colors"
+        style={{
+          flexShrink: 0,
+          background: 'var(--surface)',
+          border: '1px solid rgba(239,68,68,0.3)',
+          borderRadius: 6,
+          padding: '6px 14px',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.1em',
+          color: 'var(--loss)',
+          cursor: 'pointer',
+          fontFamily: 'Syne, sans-serif',
+          transition: 'all 0.15s',
+        }}
       >
-        Retry
+        RETRY
       </button>
     </div>
   )

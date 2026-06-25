@@ -1,5 +1,128 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 html {
   color-scheme: dark;
+}
+
+:root {
+  --bg: #07070E;
+  --surface: #0D0D1A;
+  --surface-2: #131322;
+  --border: #1A1A2E;
+  --border-2: #252540;
+  --accent: #F0A500;
+  --accent-glow: rgba(240, 165, 0, 0.15);
+  --text-1: #E2E2F0;
+  --text-2: #606090;
+  --text-3: #2A2A44;
+  --profit: #F0A500;
+  --loss: #EF4444;
+  --yes: #38BDF8;
+  --yes-bg: rgba(56, 189, 248, 0.1);
+  --yes-border: rgba(56, 189, 248, 0.2);
+  --no: #F97316;
+  --no-bg: rgba(249, 115, 22, 0.1);
+  --no-border: rgba(249, 115, 22, 0.2);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-data {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Animations ── */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--surface-2) 50%,
+    var(--surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.animate-spin {
+  animation: spin 0.9s linear infinite;
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+/* ── Card interactions ── */
+
+.trader-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.trader-card:hover {
+  border-color: var(--border-2);
+  background: var(--surface-2);
+}
+
+.trader-card:active {
+  transform: scale(0.995);
+}
+
+.position-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.15s ease;
+  overflow: hidden;
+}
+
+.position-card:hover {
+  border-color: var(--border-2);
 }
