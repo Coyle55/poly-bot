@@ -15,7 +15,7 @@ const markets: MarketConsensus[] = [
   },
 ]
 
-it('renders a row for each market consensus entry', () => {
+it('renders a card for each market consensus entry', () => {
   render(<PositionsView markets={markets} />)
   expect(screen.getByText('Will X happen?')).toBeInTheDocument()
   expect(screen.getByText('Will Y happen?')).toBeInTheDocument()
@@ -33,10 +33,8 @@ it('shows the price as a percentage', () => {
   expect(screen.getByText('35%')).toBeInTheDocument()
 })
 
-it('colors YES green and NO red', () => {
+it('shows YES and NO side labels', () => {
   render(<PositionsView markets={markets} />)
-  const yesEl = screen.getByText('YES')
-  const noEl = screen.getByText('NO')
-  expect(yesEl).toHaveClass('text-green-400')
-  expect(noEl).toHaveClass('text-red-400')
+  expect(screen.getByText('YES')).toBeInTheDocument()
+  expect(screen.getByText('NO')).toBeInTheDocument()
 })

@@ -61,61 +61,157 @@ export default function Dashboard() {
     : null
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <header className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">PolyBot</h1>
-        <div className="flex items-center gap-4">
-          {formattedTime && (
-            <span className="text-xs text-gray-500">Updated {formattedTime}</span>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
+      <header style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'linear-gradient(180deg, #0B0B18 0%, rgba(7,7,14,0.96) 100%)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: '1px solid var(--border)',
+      }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 16px' }}>
+
+          {/* Brand row */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '14px 0 10px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <h1 style={{
+                fontFamily: 'Syne, sans-serif',
+                fontWeight: 800,
+                fontSize: 'clamp(18px, 3.5vw, 24px)',
+                letterSpacing: '-0.03em',
+                color: 'var(--text-1)',
+                margin: 0,
+              }}>
+                POLYBOT
+              </h1>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                background: 'var(--accent-glow)',
+                border: '1px solid rgba(240,165,0,0.25)',
+                borderRadius: 5,
+                padding: '2px 7px',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                color: 'var(--accent)',
+                fontFamily: 'Syne, sans-serif',
+              }}>
+                <span
+                  className="animate-pulse-dot"
+                  style={{
+                    width: 5,
+                    height: 5,
+                    background: 'var(--accent)',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                  }}
+                />
+                LIVE
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {formattedTime && (
+                <span style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: 10,
+                  color: 'var(--text-3)',
+                  letterSpacing: '0.04em',
+                }}>
+                  {formattedTime}
+                </span>
+              )}
+              <button
+                aria-label="Refresh"
+                onClick={fetchData}
+                disabled={loading}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border-2)',
+                  borderRadius: 7,
+                  padding: '7px 13px',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  color: loading ? 'var(--text-3)' : 'var(--text-1)',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Syne, sans-serif',
+                  transition: 'all 0.15s',
+                  opacity: loading ? 0.6 : 1,
+                }}
+              >
+                <svg
+                  width="11" height="11" viewBox="0 0 12 12" fill="none"
+                  className={loading ? 'animate-spin' : ''}
+                  style={{ color: loading ? 'var(--text-3)' : 'var(--accent)', flexShrink: 0 }}
+                >
+                  <path
+                    d="M10 6A4 4 0 1 1 6.5 2.03V.5L9.5 3 6.5 5.5V4.03A2.97 2.97 0 1 0 9 6H10Z"
+                    fill="currentColor"
+                  />
+                </svg>
+                {loading ? 'LOADING' : 'REFRESH'}
+              </button>
+            </div>
+          </div>
+
+          {/* Tab bar */}
+          {!error && (
+            <div style={{ display: 'flex', marginBottom: -1 }}>
+              {(['traders', 'positions'] as Tab[]).map(t => (
+                <button
+                  key={t}
+                  aria-label={t === 'traders' ? 'Traders' : 'Positions'}
+                  onClick={() => setTab(t)}
+                  style={{
+                    flex: 1,
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: tab === t
+                      ? '2px solid var(--accent)'
+                      : '2px solid transparent',
+                    padding: '9px 16px',
+                    fontSize: 10,
+                    fontWeight: tab === t ? 700 : 500,
+                    letterSpacing: '0.12em',
+                    color: tab === t ? 'var(--accent)' : 'var(--text-2)',
+                    cursor: 'pointer',
+                    fontFamily: 'Syne, sans-serif',
+                    textTransform: 'uppercase',
+                    transition: 'all 0.15s',
+                    textAlign: 'center',
+                  }}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           )}
-          <button
-            onClick={fetchData}
-            disabled={loading}
-            className="rounded bg-gray-800 px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-700 disabled:opacity-50 transition-colors"
-          >
-            {loading ? 'Loading…' : 'Refresh'}
-          </button>
         </div>
       </header>
 
-      <main className="px-6 py-6 max-w-7xl mx-auto">
+      <main style={{ maxWidth: 860, margin: '0 auto', padding: '16px 16px 80px' }}>
         {error ? (
           <ErrorBanner message={error} onRetry={fetchData} />
+        ) : loading ? (
+          <SkeletonTable rows={8} cols={4} />
+        ) : tab === 'traders' ? (
+          <TradersView traders={tradersWithPositions} />
         ) : (
-          <>
-            <div className="flex gap-2 mb-6">
-              <button
-                aria-label="Traders"
-                onClick={() => setTab('traders')}
-                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-                  tab === 'traders'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                Traders
-              </button>
-              <button
-                aria-label="Positions"
-                onClick={() => setTab('positions')}
-                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-                  tab === 'positions'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                Positions
-              </button>
-            </div>
-
-            {loading ? (
-              <SkeletonTable rows={10} cols={4} />
-            ) : tab === 'traders' ? (
-              <TradersView traders={tradersWithPositions} />
-            ) : (
-              <PositionsView markets={byMarket} />
-            )}
-          </>
+          <PositionsView markets={byMarket} />
         )}
       </main>
     </div>

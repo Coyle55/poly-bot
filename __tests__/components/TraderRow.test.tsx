@@ -15,7 +15,7 @@ const trader: TraderWithPositions = {
 }
 
 it('shows rank, name, profit, and position count', () => {
-  render(<table><tbody><TraderRow trader={trader} /></tbody></table>)
+  render(<TraderRow trader={trader} />)
   expect(screen.getByText('1')).toBeInTheDocument()
   expect(screen.getByText('bigtrader')).toBeInTheDocument()
   expect(screen.getByText(/142,300/)).toBeInTheDocument()
@@ -23,9 +23,9 @@ it('shows rank, name, profit, and position count', () => {
 })
 
 it('expands to show positions on click', () => {
-  render(<table><tbody><TraderRow trader={trader} /></tbody></table>)
+  render(<TraderRow trader={trader} />)
   expect(screen.queryByText('Will X happen?')).not.toBeInTheDocument()
-  fireEvent.click(screen.getByRole('row'))
+  fireEvent.click(screen.getByTestId('trader-card'))
   expect(screen.getByText('Will X happen?')).toBeInTheDocument()
   expect(screen.getByText('YES')).toBeInTheDocument()
   expect(screen.getByText('62%')).toBeInTheDocument()
@@ -33,14 +33,14 @@ it('expands to show positions on click', () => {
 
 it('shows error state when positionsError is true', () => {
   const errTrader = { ...trader, positionsError: true, positions: [] }
-  render(<table><tbody><TraderRow trader={errTrader} /></tbody></table>)
-  fireEvent.click(screen.getByRole('row'))
+  render(<TraderRow trader={errTrader} />)
+  fireEvent.click(screen.getByTestId('trader-card'))
   expect(screen.getByText(/positions unavailable/i)).toBeInTheDocument()
 })
 
 it('shows empty message when trader has no positions', () => {
   const emptyTrader = { ...trader, positions: [] }
-  render(<table><tbody><TraderRow trader={emptyTrader} /></tbody></table>)
-  fireEvent.click(screen.getByRole('row'))
+  render(<TraderRow trader={emptyTrader} />)
+  fireEvent.click(screen.getByTestId('trader-card'))
   expect(screen.getByText(/no open positions/i)).toBeInTheDocument()
 })

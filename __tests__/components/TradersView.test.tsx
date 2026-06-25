@@ -15,16 +15,8 @@ const traders: TraderWithPositions[] = [
   },
 ]
 
-it('renders a row for each trader', () => {
+it('renders a card for each trader', () => {
   render(<TradersView traders={traders} />)
   expect(screen.getByText('alice')).toBeInTheDocument()
   expect(screen.getByText('bob')).toBeInTheDocument()
-})
-
-it('renders column headers', () => {
-  render(<TradersView traders={traders} />)
-  expect(screen.getByText(/rank/i)).toBeInTheDocument()
-  expect(screen.getByText(/trader/i)).toBeInTheDocument()
-  expect(screen.getByText(/profit/i)).toBeInTheDocument()
-  expect(screen.getByText(/positions/i)).toBeInTheDocument()
 })

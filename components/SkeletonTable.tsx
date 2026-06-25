@@ -3,18 +3,19 @@ interface SkeletonTableProps {
   cols?: number
 }
 
-export default function SkeletonTable({ rows = 10, cols = 4 }: SkeletonTableProps) {
+export default function SkeletonTable({ rows = 8 }: SkeletonTableProps) {
   return (
-    <div className="w-full space-y-2" aria-label="Loading data">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }} aria-label="Loading data">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4">
-          {Array.from({ length: cols }).map((_, j) => (
-            <div
-              key={j}
-              className="h-8 flex-1 animate-pulse rounded bg-gray-800"
-            />
-          ))}
-        </div>
+        <div
+          key={i}
+          className="animate-shimmer"
+          style={{
+            height: 68,
+            borderRadius: 12,
+            border: '1px solid var(--border)',
+          }}
+        />
       ))}
     </div>
   )
