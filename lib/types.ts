@@ -30,18 +30,18 @@ export interface MarketConsensus {
 // Raw Polymarket API shapes — field names verified in Task 3
 export interface RawPolyTrader {
   proxyWallet: string
-  name: string | null
-  pseudonym: string | null
-  profitAndLoss: number
+  userName: string | null
+  rank: number
+  pnl: number
 }
 
 export interface RawPolyPosition {
   conditionId: string
-  market: string
+  title: string
   outcome: string
   outcomeIndex: number
   size: number
-  currentPrice: number
+  curPrice: number
 }
 
 export interface LeaderboardApiResponse {
