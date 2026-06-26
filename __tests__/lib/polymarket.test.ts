@@ -6,8 +6,10 @@ const mockRawLeaderboard = [
 ]
 
 const mockRawPositions = [
-  { conditionId: 'mkt1', title: 'Will X happen?', outcome: 'Yes', outcomeIndex: 0, size: 5000, curPrice: 0.62 },
-  { conditionId: 'mkt2', title: 'Will Y happen?', outcome: 'No', outcomeIndex: 1, size: 2000, curPrice: 0.35 },
+  { conditionId: 'mkt1', title: 'Will X happen?', outcome: 'Yes', outcomeIndex: 0, size: 5000, curPrice: 0.62, avgPrice: 0.40, cashPnl: 1100, redeemable: false },
+  { conditionId: 'mkt2', title: 'Will Y happen?', outcome: 'No', outcomeIndex: 1, size: 2000, curPrice: 0.35, avgPrice: 0.30, cashPnl: 100, redeemable: false },
+  { conditionId: 'mkt3', title: 'Resolved win', outcome: 'Yes', outcomeIndex: 0, size: 1000, curPrice: 1.0, avgPrice: 0.50, cashPnl: 500, redeemable: true },
+  { conditionId: 'mkt4', title: 'Resolved loss', outcome: 'No', outcomeIndex: 1, size: 500, curPrice: 0, avgPrice: 0.60, cashPnl: -300, redeemable: true },
 ]
 
 beforeEach(() => {
@@ -44,23 +46,50 @@ describe('fetchLeaderboard', () => {
 })
 
 describe('fetchTraderPositions', () => {
-  it('maps raw positions to Position shape', async () => {
+  it('returns open positions and win rate stats', async () => {
     ;(fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => mockRawPositions,
     })
 
-    const positions = await fetchTraderPositions('0xabc')
+    const result = await fetchTraderPositions('0xabc')
 
-    expect(positions).toHaveLength(2)
-    expect(positions[0]).toEqual({
+    expect(result.positions).toHaveLength(2)
+    expect(result.positions[0]).toEqual({
       marketId: 'mkt1',
       marketName: 'Will X happen?',
       side: 'YES',
       price: 0.62,
+      avgPrice: 0.40,
       size: 5000,
     })
-    expect(positions[1].side).toBe('NO')
+    expect(result.positions[1].side).toBe('NO')
+    expect(result.stats.wins).toBe(1)
+    expect(result.stats.losses).toBe(1)
+    expect(result.stats.winRate).toBe(0.5)
+  })
+
+  it('excludes resolved positions from open positions list', async () => {
+    ;(fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockRawPositions,
+    })
+
+    const result = await fetchTraderPositions('0xabc')
+    const ids = result.positions.map(p => p.marketId)
+    expect(ids).not.toContain('mkt3')
+    expect(ids).not.toContain('mkt4')
+  })
+
+  it('returns null winRate when no resolved positions', async () => {
+    const openOnly = mockRawPositions.slice(0, 2)
+    ;(fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => openOnly,
+    })
+
+    const result = await fetchTraderPositions('0xabc')
+    expect(result.stats.winRate).toBeNull()
   })
 
   it('throws when fetch fails', async () => {
@@ -74,15 +103,17 @@ describe('buildMarketConsensus', () => {
     const traders = [
       {
         rank: 1, address: '0xabc', name: 'alice', totalProfit: 100000, positionsError: false,
+        winRate: null, wins: 0, losses: 0,
         positions: [
-          { marketId: 'mkt1', marketName: 'Will X?', side: 'YES' as const, price: 0.62, size: 5000 },
+          { marketId: 'mkt1', marketName: 'Will X?', side: 'YES' as const, price: 0.62, avgPrice: 0.50, size: 5000 },
         ],
       },
       {
         rank: 2, address: '0xdef', name: 'bob', totalProfit: 80000, positionsError: false,
+        winRate: 0.6, wins: 3, losses: 2,
         positions: [
-          { marketId: 'mkt1', marketName: 'Will X?', side: 'YES' as const, price: 0.62, size: 3000 },
-          { marketId: 'mkt2', marketName: 'Will Y?', side: 'NO' as const, price: 0.35, size: 2000 },
+          { marketId: 'mkt1', marketName: 'Will X?', side: 'YES' as const, price: 0.62, avgPrice: 0.55, size: 3000 },
+          { marketId: 'mkt2', marketName: 'Will Y?', side: 'NO' as const, price: 0.35, avgPrice: 0.40, size: 2000 },
         ],
       },
     ]
@@ -100,6 +131,7 @@ describe('buildMarketConsensus', () => {
     const traders = [
       {
         rank: 1, address: '0xabc', name: 'alice', totalProfit: 100000, positionsError: true,
+        winRate: null, wins: 0, losses: 0,
         positions: [],
       },
     ]
