@@ -22,28 +22,6 @@ export default function TraderRow({ trader }: TraderRowProps) {
       onClick={() => setExpanded(e => !e)}
       style={{ marginBottom: 8, animationDelay: `${(trader.rank - 1) * 0.04}s`, cursor: 'pointer' }}
     >
-      {/* Ghost rank watermark */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          right: 14,
-          top: 0,
-          bottom: 0,
-          display: 'flex',
-          alignItems: 'center',
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: 56,
-          fontWeight: 600,
-          color: 'var(--border-2)',
-          lineHeight: 1,
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}
-      >
-        {String(trader.rank).padStart(2, '0')}
-      </div>
-
       {/* Header row */}
       <div
         style={{
@@ -54,6 +32,27 @@ export default function TraderRow({ trader }: TraderRowProps) {
           gap: 12,
         }}
       >
+        {/* Ghost rank watermark — scoped inside header so it doesn't bleed into expanded content */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            right: 14,
+            top: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: 56,
+            fontWeight: 600,
+            color: 'var(--border-2)',
+            lineHeight: 1,
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+        >
+          {String(trader.rank).padStart(2, '0')}
+        </div>
         {/* Visible rank */}
         <span style={{
           fontFamily: 'JetBrains Mono, monospace',
@@ -88,25 +87,8 @@ export default function TraderRow({ trader }: TraderRowProps) {
           </div>
         </div>
 
-        {/* Win rate + position count + chevron */}
+        {/* Position count + chevron */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          {trader.winRate !== null && (
-            <span style={{
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: 10,
-              borderRadius: 4,
-              padding: '2px 6px',
-              color: trader.winRate >= 0.6 ? 'var(--profit)' : trader.winRate >= 0.4 ? 'var(--text-2)' : 'var(--loss)',
-              background: trader.winRate >= 0.6
-                ? 'rgba(240,165,0,0.1)'
-                : trader.winRate >= 0.4
-                ? 'var(--surface-2)'
-                : 'rgba(239,68,68,0.1)',
-              border: `1px solid ${trader.winRate >= 0.6 ? 'rgba(240,165,0,0.2)' : trader.winRate >= 0.4 ? 'var(--border-2)' : 'rgba(239,68,68,0.2)'}`,
-            }}>
-              {trader.wins}W {trader.losses}L
-            </span>
-          )}
           <span style={{
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11,
