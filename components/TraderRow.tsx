@@ -88,8 +88,25 @@ export default function TraderRow({ trader }: TraderRowProps) {
           </div>
         </div>
 
-        {/* Position count + chevron */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        {/* Win rate + position count + chevron */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          {trader.winRate !== null && (
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 10,
+              borderRadius: 4,
+              padding: '2px 6px',
+              color: trader.winRate >= 0.6 ? 'var(--profit)' : trader.winRate >= 0.4 ? 'var(--text-2)' : 'var(--loss)',
+              background: trader.winRate >= 0.6
+                ? 'rgba(240,165,0,0.1)'
+                : trader.winRate >= 0.4
+                ? 'var(--surface-2)'
+                : 'rgba(239,68,68,0.1)',
+              border: `1px solid ${trader.winRate >= 0.6 ? 'rgba(240,165,0,0.2)' : trader.winRate >= 0.4 ? 'var(--border-2)' : 'rgba(239,68,68,0.2)'}`,
+            }}>
+              {trader.wins}W {trader.losses}L
+            </span>
+          )}
           <span style={{
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11,
@@ -164,7 +181,7 @@ export default function TraderRow({ trader }: TraderRowProps) {
                       fontSize: 11,
                       color: 'var(--text-1)',
                     }}>
-                      {Math.round(pos.price * 100)}%
+                      {Math.round(pos.avgPrice * 100)}% → {Math.round(pos.price * 100)}%
                     </div>
                     <div style={{
                       fontFamily: 'JetBrains Mono, monospace',

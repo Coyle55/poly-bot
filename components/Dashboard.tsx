@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { Trader, TraderWithPositions, MarketConsensus } from '@/lib/types'
+import type { Trader, TraderWithPositions, MarketConsensus, TraderStats } from '@/lib/types'
 import { buildMarketConsensus } from '@/lib/polymarket'
 import TradersView from '@/components/TradersView'
 import PositionsView from '@/components/PositionsView'
@@ -29,15 +29,22 @@ export default function Dashboard() {
       const addresses = traders.map(t => t.address).join(',')
       const posRes = await fetch(`/api/positions/all?addresses=${addresses}`)
       if (!posRes.ok) throw new Error('Failed to fetch positions')
-      const { positions }: { positions: Record<string, unknown> } = await posRes.json()
+      const { positions, stats }: {
+        positions: Record<string, unknown>
+        stats: Record<string, TraderStats>
+      } = await posRes.json()
 
       const withPositions: TraderWithPositions[] = traders.map(trader => {
         const raw = positions[trader.address]
         const isError = !Array.isArray(raw)
+        const traderStats = stats?.[trader.address] ?? { winRate: null, wins: 0, losses: 0 }
         return {
           ...trader,
           positions: isError ? [] : (raw as TraderWithPositions['positions']),
           positionsError: isError,
+          winRate: traderStats.winRate,
+          wins: traderStats.wins,
+          losses: traderStats.losses,
         }
       })
 

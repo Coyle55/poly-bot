@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { fetchTraderPositions } from '@/lib/polymarket'
-import type { Position } from '@/lib/types'
+import type { Position, TraderStats } from '@/lib/types'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -22,12 +22,18 @@ export async function GET(request: NextRequest) {
   )
 
   const positions: Record<string, Position[] | { error: true }> = {}
+  const stats: Record<string, TraderStats> = {}
+
   addresses.forEach((address, i) => {
     const result = results[i]
-    positions[address] = result.status === 'fulfilled'
-      ? result.value
-      : { error: true }
+    if (result.status === 'fulfilled') {
+      positions[address] = result.value.positions
+      stats[address] = result.value.stats
+    } else {
+      positions[address] = { error: true }
+      stats[address] = { winRate: null, wins: 0, losses: 0 }
+    }
   })
 
-  return NextResponse.json({ positions })
+  return NextResponse.json({ positions, stats })
 }
