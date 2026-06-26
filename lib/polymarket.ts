@@ -23,13 +23,15 @@ export async function fetchTraderPositions(address: string): Promise<Position[]>
   const res = await fetch(url, { cache: 'no-store' })
   if (!res.ok) throw new Error(`Positions fetch failed for ${address}: ${res.status}`)
   const raw: RawPolyPosition[] = await res.json()
-  return raw.map(p => ({
-    marketId: p.conditionId,
-    marketName: p.title,
-    side: p.outcome.toLowerCase() === 'yes' ? 'YES' : 'NO',
-    price: p.curPrice,
-    size: p.size,
-  }))
+  return raw
+    .filter(p => p.curPrice > 0.01)
+    .map(p => ({
+      marketId: p.conditionId,
+      marketName: p.title,
+      side: p.outcome.toLowerCase() === 'yes' ? 'YES' : 'NO',
+      price: p.curPrice,
+      size: p.size,
+    }))
 }
 
 export function buildMarketConsensus(traders: TraderWithPositions[]): MarketConsensus[] {
